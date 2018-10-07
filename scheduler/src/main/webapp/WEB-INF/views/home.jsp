@@ -117,22 +117,22 @@
 			var regNumber = /^[0-9]*$/;
 			
 			// null length type 확인
-			if (!regNumber.test(headNum) || headNum < 2){
-				$("#help").html("수간호사의 수는 2 이상의 정수입니다.");	
+			if (!regNumber.test(headNum) || headNum < 2 || headNum > 50){
+				$("#help").html("수간호사의 수는 2~50 사이의 정수입니다.");	
 				$("#headNum").val('');
 				$("#headNum").focus();
 				return false;
 			}
 			
-			if(!regNumber.test(nurseNum) || nurseNum < 4){
-				$("#help").html("일반간호사의 수는 4 이상의 정수입니다.");
+			if(!regNumber.test(nurseNum) || nurseNum < 4 || nurseNum > 1000){
+				$("#help").html("일반간호사의 수는 4~1000 사이의 정수입니다.");
 				$("#nurseNum").val('');
 				$("#nurseNum").focus();
 				return false;
 			}
 			
-			if(!regNumber.test(assistNum) || assistNum < 4){
-				$("#help").html("간호조무사의 수는 4 이상의 정수입니다.");
+			if(!regNumber.test(assistNum) || assistNum < 4 || assistNum > 1000){
+				$("#help").html("간호조무사의 수는 4~1000 사이의 정수입니다.");
 				$("#assistNum").val('');
 				$("#assistNum").focus();
 				return false;
