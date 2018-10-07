@@ -27,8 +27,8 @@ td {
 	margin-bottom : 20px;
 }
 
-.boundary {
-	
+#searchDesc{
+	margin-left: 300px;
 }
 </style>
 </head>
@@ -53,11 +53,12 @@ td {
 
 	<!-- list 호출을 위한 index 선언 -->
 	<c:set var="nIndex" value="0"></c:set>
-
+	
+	
 	<div class="container-fluid">
 		
 		<!-- menu -->
-		<div class="row" id="menu">
+ 		<div class="row" id="menu">
 			<div class="col-sm-6">
 				<select id="nurseCategory" onchange="categoryChange()">
 					<option>선택</option>
@@ -71,88 +72,25 @@ td {
 				</select>
 				<button class="btn btn-warning" id="btnSearch">검색</button>
 				<button class="btn btn-primary" id="btnHome">HOME으로 가기</button>
-
+				
+				<c:if test="${target != '' }">
+					<span class="text-info" id="searchDesc">${target}의 일정</span>				
+				</c:if>
 			</div> 
+			
 		</div>
 		
-		<!-- 인원 -->
-		<div class="row" id="depart">
-			<!-- 수간호사 인원 -->
-			<div class="col-sm-3">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<td>수간호사</td>
-							<td>인원</td>						
-						</tr>
-					</thead>
-					<tbody>	
-						<tr>
-							<td>H</td>
-							<td>${dto.headNum }</td>									
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			
-			<!-- 일반간호사 인원 -->
-			<div class="col-sm-3">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<td>일반 간호사팀</td>
-							<td>인원</td>					
-						</tr>
-					</thead>
-					<tbody>								
-							<!-- 일반간호사 -->
-							<c:forEach var="i" items="${map}">
-								<c:if test="${i.key == 'N1' || i.key == 'N2' || i.key == 'N3' || i.key == 'N4' }">
-										<tr>
-											<td>${i.key }</td>
-											<td>${i.value }</td>										
-										</tr>
-								</c:if>
-							</c:forEach>										
-
-					</tbody>
-				</table>
-			</div>
-			
-			<!-- 조무사 인원 -->
-			<div class="col-sm-3">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<td>간호 조무사팀</td>
-							<td>인원</td>							
-						</tr>
-					</thead>
-					<tbody>			
-							<!-- 간호조무사 -->	
-							<c:forEach var="i" items="${map}">
-								<c:if test="${i.key == 'A1' || i.key == 'A2' || i.key == 'A3' || i.key == 'A4' }">
-									<tr>
-										<td>${i.key }</td>
-										<td>${i.value }</td>									
-									</tr>	
-								</c:if>
-							</c:forEach>										
-					</tbody>
-				</table>
-			</div>
-					
-		</div>
+		
 		
 		<div class="row" >
 			<c:forEach items="${list}" var="i">
 
 				<div class="col-sm-6">
-					<table class="table table-bordered table-striped">
+					<table class="table table-bordered">
 
 						<!-- 출력할 년월 정보 -->
 						<thead>
-							<tr>
+							<tr class="success">
 								<td colspan="7">${i.year}년${i.month}월</td>
 							</tr>
 
@@ -183,40 +121,39 @@ td {
 								<!-- 그 뒤로 마지막 날까지 날짜 생성  -->
 								<c:forEach begin="${i.startDate}" end="${i.endDate}" step="1"
 									var="d">
-									<td>
-										<h5>${d}</h5>
+										
+										<!-- 근무 없는 날 근무인 날 td 따로 생성 -->
+										<c:choose>
+											<c:when test="${searchList[nIndex] == 'Rest' }">
+											<td>
+												<h5>${d}</h5>
+											</c:when>
+											<c:otherwise>
+											<td class="info">
+												<strong>${d }</strong>
+												<h5 class="boundary">
+													<c:choose>
+														<c:when test="${searchList[nIndex] == 'N' }">
+															<span class="text-success">
+																N
+															</span>
+														</c:when>
+														<c:when test="${searchList[nIndex] == 'D' }">
+															<span class="text-danger">
+																D
+															</span>
+														</c:when>
+														<c:when test="${searchList[nIndex] == 'E' }">
+															<span class="text-primary">
+																E
+															</span>
+														</c:when>
+													
+													</c:choose>
+												</h5>
+											</c:otherwise>
+										</c:choose>
 
-										<h6 class="boundary">
-											N : <span class="text-success">
-													${nurseList[nIndex].night } 
-												</span> 
-												<span class="text-danger">
-													${assistList[nIndex].night } 
-												</span>
-										</h6>
-
-										<h6 class="boundary">
-											D : <span class="text-success">
-													${nurseList[nIndex].day } 
-												</span> 
-												<span class="text-danger">
-													${assistList[nIndex].day } 
-												</span> 
-												<span class="text-primary">
-													<c:if test="${headList[nIndex].day != 'noHead' }">
-														${headList[nIndex].day }											
-													</c:if>
-												</span>
-										</h6>
-
-										<h6 class="boundary">
-											E : <span class="text-success">
-													${nurseList[nIndex].evening } 
-												</span> 
-												<span class="text-primary">
-													${assistList[nIndex].evening } 
-												</span>
-										</h6>
 									</td>
 									
 									<!-- index += index + 1 -->
@@ -235,8 +172,8 @@ td {
 					
 					<c:set var="tIndex" value="${tIndex +1}"></c:set>
 					<c:if test="${tIndex == 2 }">
-						</div><div class="row">
 						<c:set var="tIndex" value="0"></c:set>
+						</div><div class="row">
 					</c:if>
 					
 				</div>

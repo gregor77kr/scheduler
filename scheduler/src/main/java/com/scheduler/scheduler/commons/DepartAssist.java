@@ -1,6 +1,8 @@
 package com.scheduler.scheduler.commons;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -26,7 +28,7 @@ public class DepartAssist implements Depart {
 
 		for (int i = 0; i <= dayDif; i++) {
 			dto = new NurseDto();
-			switch ((i+1) % 4) {
+			switch ((i + 1) % 4) {
 			case 1:
 				dto.setNight("A4");
 				dto.setDay("A3");
@@ -58,6 +60,75 @@ public class DepartAssist implements Depart {
 			}
 		}
 		return list;
-	}//create ends
+	}// create ends
+
+	@Override
+	public ArrayList<String> createSearchList(String target, ArrayList<NurseDto> dto) {
+
+		ArrayList<String> result = new ArrayList<String>();
+
+		for (NurseDto d : dto) {
+
+			if (d.getNight().equals(target)) {
+				result.add("N");
+			} else if (d.getDay().equals(target)) {
+				result.add("D");
+			} else if (d.getEvening().equals(target)) {
+				result.add("E");
+			} else {
+				result.add("Rest");
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Map<String, Integer> getDepart() {
+
+		Map<String, Integer> map = new HashMap<String, Integer>();
+
+		int a1 = 0;
+		int a2 = 0;
+		int a3 = 0;
+		int a4 = 0;
+
+		switch (assistNum % 4) {
+
+		case 0:
+			a1 = assistNum / 4;
+			a2 = a1;
+			a3 = a1;
+			a4 = a1;
+			break;
+
+		case 1:
+			a1 = (assistNum / 4);
+			a2 = a1 + 1;
+			a3 = a1;
+			a4 = a1;
+			break;
+
+		case 2:
+			a1 = (assistNum / 4);
+			a2 = a1 + 1;
+			a3 = a1 + 1;
+			a4 = a1;
+			break;
+
+		case 3:
+			a1 = (assistNum / 4);
+			a2 = a1 + 1;
+			a3 = a1 + 1;
+			a4 = a1 + 1;
+			break;
+		}
+
+		map.put("A1", a1);
+		map.put("A2", a2);
+		map.put("A3", a3);
+		map.put("A4", a4);
+		
+		return map;
+	}
 
 }
