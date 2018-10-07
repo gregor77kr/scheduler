@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" type="text/css" href='<c:url value="/webjars/bootstrap/3.3.6/css/bootstrap.min.css"/>'>
-<link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.min.css" />">
+<link rel="stylesheet" type="text/css" href="<c:url value="/webjars/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" />">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style type="text/css">
@@ -90,17 +90,25 @@
 </body>
 <script type="text/javascript" src="<c:url value="/webjars/jquery/1.9.1/jquery.min.js"/>" ></script>
 <script type="text/javascript" src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/webjars/jquery-ui/1.11.4/jquery-ui.min.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/webjars/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/webjars/jquery-ui/1.11.4/jquery-ui.js"/>"></script>
+<script type="text/javascript" src="<c:url value="/webjars/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js" />"></script>
 
 <script type="text/javascript">
 	$(function() {
 		
+		$("#initialize").click(function() {
+			 $("#headNum").val('');
+			 $("#nurseNum").val('');
+			 $("#assistNum").val('');
+			 $("#startDate").val('');
+			 $("#endDate").val('');
+		});//초기화
+		
+		// 유효성 검증
 		function validCheck() {
 			var headNum = $("#headNum").val();
 			var nurseNum = $("#nurseNum").val();
 			var assistNum = $("#assistNum").val();
-			
 			var startDate = $("#startDate").val();
 			var endDate = $("#endDate").val();
 			
@@ -108,18 +116,25 @@
 			
 			var regNumber = /^[0-9]*$/;
 			
+			// null length type 확인
 			if (!regNumber.test(headNum) || headNum < 2){
 				$("#help").html("수간호사의 수는 2 이상의 정수입니다.");	
+				$("#headNum").val('');
+				$("#headNum").focus();
 				return false;
 			}
 			
 			if(!regNumber.test(nurseNum) || nurseNum < 4){
-				$("#help").html("일반간호사의 수는 4 이상의 정수입니다.");	
+				$("#help").html("일반간호사의 수는 4 이상의 정수입니다.");
+				$("#nurseNum").val('');
+				$("#nurseNum").focus();
 				return false;
 			}
 			
 			if(!regNumber.test(assistNum) || assistNum < 4){
-				$("#help").html("간호조무사의 수는 4 이상의 정수입니다.");	
+				$("#help").html("간호조무사의 수는 4 이상의 정수입니다.");
+				$("#assistNum").val('');
+				$("#assistNum").focus();
 				return false;
 			}
 			
@@ -128,6 +143,28 @@
 				return false;
 			} else if(endDate == ''){
 				$("#help").html("종료일을 선택해주세요");
+				return false;
+			}
+			
+			// 시작일 < 종료일인 경우
+			// 시작일과 종료일이 1년 이내인 경우만 인정
+			var sdate = new Date(startDate.substr(0,4), startDate.substr(4,2) -1, startDate.substr(6,2));
+			var edate = new Date(endDate.substr(0,4), endDate.substr(4,2) -1, endDate.substr(6,2));
+			
+			var gap_years = edate.getFullYear() - sdate.getFullYear();
+			var gap_months = edate.getMonth() - sdate.getMonth();
+			
+			var interval = gap_years*12 + gap_months;
+			
+			if(sdate.getTime() > edate.getTime()){
+				$("#help").html("시작일이 종료일보다 클 수 없습니다.");
+				$("#startDate").val('');
+				$("#endDate").val('');
+				return false;
+			} else if(interval > 12){
+				$("#help").html("최대 기간은 1년 입니다.");
+				$("#startDate").val('');
+				$("#endDate").val('');
 				return false;
 			}
 			
@@ -140,17 +177,14 @@
 		$("#startDate").datepicker({
 			format : "yyyymmdd",
 			autoclose : true,
-			endDate : "today",
 			todayHighlight : true
-
 		});
-		
+				
 		// endDate datepicker
 		$("#endDate").datepicker({
 			format : "yyyymmdd",
 			autoclose : true,
-			todayHighlight : true
-
+			todayHighlight : true,
 		});
 		
 		$("#create").click(function() {

@@ -88,7 +88,7 @@ td {
 					</thead>
 					<tbody>	
 						<tr>
-							<td>H</td>
+							<td>H1 ~ H${dto.headNum }</td>
 							<td>${dto.headNum }</td>									
 						</tr>
 					</tbody>
